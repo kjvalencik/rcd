@@ -38,7 +38,8 @@ $(BUILD):
 
 html: mkdir $(BUILD)/index.html
 $(BUILD)/index.html: src/index.html
-	@perl -pe 'BEGIN{undef $$/;} s/\s*<!--\s*DEVELOPMENT.*?-->//sg' \
+	@perl -pe \
+		'BEGIN{undef $$/;} s/\s*<!--\s*DEVELOPMENT: Start.*?DEVELOPMENT: End -->//sg' \
 		src/index.html > $(BUILD)/index.html
 
 js: mkdir $(BUILD)/scripts.js
