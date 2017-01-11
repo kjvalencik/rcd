@@ -1,0 +1,54 @@
+{
+  "name": "rcd",
+  "version": "1.0.0",
+  "description": "Return of the Shadown Class Designer",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kjvalencik/rcd.git"
+  },
+  "keywords": [
+    "RotS",
+    "RCD"
+  ],
+  "author": "K.J. Valencik",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kjvalencik/rcd/issues"
+  },
+  "homepage": "https://github.com/kjvalencik/rcd#readme",
+  "devDependencies": {
+    "ava": "^0.17.0",
+    "babel-plugin-react-transform": "^2.0.2",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-react": "^6.16.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.3.0",
+    "envify": "^4.0.0",
+    "eslint": "^3.13.1",
+    "eslint-config-airbnb": "^14.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^3.0.2",
+    "eslint-plugin-react": "^6.9.0",
+    "express": "^4.14.0",
+    "less": "^2.7.2",
+    "livereactload": "^3.2.0",
+    "livereload": "^0.6.0",
+    "nodemon": "^1.11.0",
+    "normalize.css": "^5.0.0",
+    "nyc": "^10.0.0",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-proxy": "^1.1.8",
+    "uglifyify": "^3.0.4",
+    "watchify": "^3.8.0"
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ]
+  }
+}
