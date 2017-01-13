@@ -1,6 +1,7 @@
 import {
 	RESET,
 	LOAD,
+	LOAD_HASH,
 
 	SET_POINTS,
 	SET_LEVEL,
@@ -87,15 +88,33 @@ function getDefaults(name = "") {
 	};
 }
 
+function loadHash(hash) {
+	try {
+		const [warrior, ranger, mystic, mage] = JSON.parse(hash.slice(1));
+
+		return {
+			name : "",
+			warrior,
+			ranger,
+			mystic,
+			mage
+		};
+	} catch (e) {
+		return getDefaults();
+	}
+}
+
 export default function rcd(state = getDefaults(), {
 	type,
 	preset,
+	hash,
 	prof,
 	value
 }) {
 	switch (type) {
 		case RESET: return getDefaults(state.name);
 		case LOAD: return preset;
+		case LOAD_HASH: return loadHash(hash);
 		case SET_POINTS: return setPoints(state, prof, value);
 		case SET_LEVEL: return setLevel(state, prof, value);
 		case SET_URUK_LEVEL: return setUrukLevel(state, prof, value);

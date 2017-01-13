@@ -1,5 +1,6 @@
 export const RESET = "RESET";
 export const LOAD = "LOAD";
+export const LOAD_HASH = "LOAD_HASH";
 
 export const SET_POINTS = "SET_POINTS";
 export const SET_LEVEL = "SET_LEVEL";
@@ -33,4 +34,8 @@ export function setUrukLevel(prof, value) {
 
 export function setOrcLevel(prof, value) {
 	return { type : SET_ORC_LEVEL, prof, value };
+}
+
+export function loadHash(hash) {
+	return { type : LOAD_HASH, hash };
 }
