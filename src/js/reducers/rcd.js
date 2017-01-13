@@ -1,5 +1,6 @@
 import {
 	RESET,
+	LOAD,
 
 	SET_POINTS,
 	SET_LEVEL,
@@ -86,9 +87,15 @@ function getDefaults(name = "") {
 	};
 }
 
-export default function rcd(state = getDefaults(), { type, prof, value }) {
+export default function rcd(state = getDefaults(), {
+	type,
+	preset,
+	prof,
+	value
+}) {
 	switch (type) {
 		case RESET: return getDefaults(state.name);
+		case LOAD: return preset;
 		case SET_POINTS: return setPoints(state, prof, value);
 		case SET_LEVEL: return setLevel(state, prof, value);
 		case SET_URUK_LEVEL: return setUrukLevel(state, prof, value);

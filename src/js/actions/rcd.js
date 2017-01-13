@@ -1,4 +1,5 @@
 export const RESET = "RESET";
+export const LOAD = "LOAD";
 
 export const SET_POINTS = "SET_POINTS";
 export const SET_LEVEL = "SET_LEVEL";
@@ -12,6 +13,10 @@ export const MAGE = "MAGE";
 
 export function reset() {
 	return { type : RESET };
+}
+
+export function load(preset) {
+	return { type : LOAD, preset };
 }
 
 export function setPoints(prof, value) {
