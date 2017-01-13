@@ -16,7 +16,9 @@ function RClass({ load, name, coeffs : [warrior, ranger, mystic, mage] }) {
 	}
 
 	return (
-		<li><button onClick={onClick}>{name}</button></li>
+		<li className="preset">
+			<button onClick={onClick}>{name}</button>
+		</li>
 	);
 }
 
@@ -30,7 +32,7 @@ function Category({ load, label, classes }) {
 	return (
 		<li>
 			<h3>{label}</h3>
-			<ul>
+			<ul className="presets">
 				{classes.map(({ name, coeffs }) => (
 					<RClass
 						key={name}
@@ -55,7 +57,7 @@ Category.propTypes = {
 
 function Presets({ load }) {
 	return (
-		<ul>
+		<ul className="preset-categories">
 			{categories.map(({ category, classes }) => (
 				<Category
 					key={category}
