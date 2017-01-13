@@ -1,9 +1,9 @@
 {
 	"presets" : ["latest", "react"],
+	"plugins" : ["transform-object-rest-spread"],
 	"env"     : {
 		"development" : {
 			"plugins" : [
-				"transform-object-rest-spread",
 				["react-transform", {
 					"transforms" : [{
 						"transform" : "livereactload/babel-transform",
