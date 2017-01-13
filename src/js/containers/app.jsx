@@ -1,8 +1,8 @@
-import React, { Component, PropTypes } from "react";
+import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import Counter from "../components/counter";
-import * as CounterActions from "../actions/counter";
+import RCD from "../components/rcd";
+import * as RCDActions from "../actions/rcd";
 
 // Must be a component for livereactload
 // eslint-disable-next-line react/prefer-stateless-function
@@ -12,26 +12,20 @@ class App extends Component {
 			<div>
 				<h1>Return of the Shadow</h1>
 				<h2>Class Designer</h2>
-				<Counter {...this.props} />
+				<RCD {...this.props} />
 			</div>
 		);
 	}
 }
 
-App.propTypes = {
-	increment : PropTypes.func.isRequired,
-	decrement : PropTypes.func.isRequired,
-	counter   : PropTypes.number.isRequired
-};
-
-function mapStateToProps(state) {
+function mapStateToProps({ rcd }) {
 	return {
-		counter : state.counter
+		rcd
 	};
 }
 
 function mapDispatchToProps(dispatch) {
-	return bindActionCreators(CounterActions, dispatch);
+	return bindActionCreators(RCDActions, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
