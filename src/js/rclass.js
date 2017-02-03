@@ -1,96 +1,109 @@
-export const WARRIOR = 0;
-export const RANGER = 1;
-export const MYSTIC = 2;
-export const MAGE = 3;
+export const WARRIOR = "WARRIOR";
+export const RANGER = "RANGER";
+export const MYSTIC = "MYSTIC";
+export const MAGE = "MAGE";
 
-const MAX_POINTS = 150;
-const URUK_MAGE_MALUS = 3;
-const ORC_SCALE = 2 / 3;
+export const URUK = 0;
+export const ORC = 1;
 
-export default function RClass(initialClassPoints = [0, 0, 0, 0]) {
+function RClass(profs = [0, 0, 0, 0]) {
 	const self = {};
-	const classPoints = [...initialClassPoints];
 
-	function getUrukMalus(type) {
-		return type === MAGE ? URUK_MAGE_MALUS : 0;
-	}
+	const warrior = parseInt(profs[0], 10) || 0;
+	const ranger = parseInt(profs[1], 10) || 0;
+	const mystic = parseInt(profs[2], 10) || 0;
+	const mage = parseInt(profs[3], 10) || 0;
 
-	function getPoints(type) {
-		return classPoints[type];
-	}
-
-	function getCoefficient(type) {
-		const points = getPoints(type);
-
-		return 10 * Math.sqrt(points);
-	}
-
-	function getLevelInternal(type, { scale = 1, malus = 0 } = {}) {
-		const points = getCoefficient(type);
-
-		return Math.floor((3 * scale * points) / 10) - malus;
-	}
-
-	function getLevel(type) {
-		return getLevelInternal(type);
-	}
-
-	function getOrcLevel(type) {
-		return getLevelInternal(type, { scale : ORC_SCALE });
-	}
-
-	function getUrukLevel(type) {
-		return getLevelInternal(type, { malus : getUrukMalus(type) });
-	}
-
-	function setPoints(type, points) {
-		classPoints[type] = points;
-
-		return self;
-	}
-
-	function setLevelInternal(type, level, { scale = 1, malus = 0 } = {}) {
-		classPoints[type] = Math.ceil(((level + malus) / (3 * scale)) ** 2);
-
-		return self;
-	}
-
-	function setLevel(type, level) {
-		return setLevelInternal(type, level);
-	}
-
-	function setOrcLevel(type, level) {
-		return setLevelInternal(type, level, { scale : ORC_SCALE });
-	}
-
-	function setUrukLevel(type, level) {
-		return setLevelInternal(type, level, { malus : getUrukMalus(type) });
-	}
-
-	function getTotal() {
-		return classPoints.reduce((y, x) => y + x);
-	}
-
-	function getRemaining() {
-		return MAX_POINTS - getTotal();
+	function isEqual(rClass) {
+		return rClass.getPoints(WARRIOR) === warrior
+			&& rClass.getPoints(RANGER) === ranger
+			&& rClass.getPoints(MYSTIC) === mystic
+			&& rClass.getPoints(MAGE) === mage;
 	}
 
 	function toJSON() {
-		return [...classPoints];
+		return [warrior, ranger, mystic, mage];
 	}
 
-	return Object.assign(self, {
+	function getTotal() {
+		return warrior + ranger + mystic + mage;
+	}
+
+	function getRemaining() {
+		return 150 - getTotal();
+	}
+
+	function getPoints(prof) {
+		switch (prof) {
+			case WARRIOR: return warrior;
+			case RANGER: return ranger;
+			case MYSTIC: return mystic;
+			case MAGE: return mage;
+			default:
+		}
+
+		return 0;
+	}
+
+	function getCoefficient(prof) {
+		return 10 * Math.sqrt(getPoints(prof));
+	}
+
+	function getLevel(prof, race) {
+		const level = (3 * getCoefficient(prof)) / 10;
+
+		if (race === ORC) {
+			return Math.floor((2 * level) / 3);
+		} else if (race === URUK && prof === MAGE) {
+			return Math.floor(level - 3);
+		}
+
+		return Math.floor(level);
+	}
+
+	function setPoints(prof, points) {
+		switch (prof) {
+			case WARRIOR: return RClass([points, ranger, mystic, mage]);
+			case RANGER: return RClass([warrior, points, mystic, mage]);
+			case MYSTIC: return RClass([warrior, ranger, points, mage]);
+			case MAGE: return RClass([warrior, ranger, mystic, points]);
+			default:
+		}
+
+		return self;
+	}
+
+	function setLevel(prof, level, race) {
+		if (race === ORC) {
+			return setLevel(prof, (3 * level) / 2);
+		}
+
+		if (race === URUK && prof === MAGE) {
+			return setLevel(prof, level + 3);
+		}
+
+		return setPoints(prof, Math.ceil((level / 3) ** 2));
+	}
+
+	function optimize(race) {
+		return setLevel(WARRIOR, getLevel(WARRIOR, race), race)
+			.setLevel(RANGER, getLevel(RANGER, race), race)
+			.setLevel(MYSTIC, getLevel(MYSTIC, race), race)
+			.setLevel(MAGE, getLevel(MAGE, race), race);
+	}
+
+	return Object.freeze(Object.assign(self, {
+		isEqual,
+		toJSON,
+		getTotal,
+		getRemaining,
 		getPoints,
 		getCoefficient,
 		getLevel,
-		getOrcLevel,
-		getUrukLevel,
-		getTotal,
-		getRemaining,
 		setPoints,
 		setLevel,
-		setOrcLevel,
-		setUrukLevel,
-		toJSON
-	});
+		optimize
+	}));
 }
+
+export default RClass;

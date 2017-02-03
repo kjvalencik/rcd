@@ -1,15 +1,10 @@
 import React, { PropTypes } from "react";
 
+import RClass from "../rclass";
 import categories from "../presets";
 
-function RClass({ load, name, coeffs : [warrior, ranger, mystic, mage] }) {
-	const preset = {
-		name,
-		warrior,
-		ranger,
-		mystic,
-		mage
-	};
+function Preset({ load, name, coeffs }) {
+	const preset = RClass(coeffs);
 
 	function onClick() {
 		return load(preset);
@@ -22,7 +17,7 @@ function RClass({ load, name, coeffs : [warrior, ranger, mystic, mage] }) {
 	);
 }
 
-RClass.propTypes = {
+Preset.propTypes = {
 	load   : PropTypes.func.isRequired,
 	name   : PropTypes.string.isRequired,
 	coeffs : PropTypes.arrayOf(PropTypes.number).isRequired
@@ -34,10 +29,10 @@ function Category({ load, label, classes }) {
 			<h3>{label}</h3>
 			<ul className="presets">
 				{classes.map(({ name, coeffs }) => (
-					<RClass
+					<Preset
 						key={name}
-						load={load}
 						name={name}
+						load={load}
 						coeffs={coeffs}
 					/>
 				))}

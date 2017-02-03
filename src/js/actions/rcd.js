@@ -7,10 +7,9 @@ export const SET_LEVEL = "SET_LEVEL";
 export const SET_URUK_LEVEL = "SET_URUK_LEVEL";
 export const SET_ORC_LEVEL = "SET_ORC_LEVEL";
 
-export const WARRIOR = "WARRIOR";
-export const RANGER = "RANGER";
-export const MYSTIC = "MYSTIC";
-export const MAGE = "MAGE";
+export const OPTIMIZE = "OPTIMIZE";
+export const OPTIMIZE_URUK = "OPTIMIZE_URUK";
+export const OPTIMIZE_ORC = "OPTIMIZE_ORC";
 
 export function reset() {
 	return { type : RESET };
@@ -18,6 +17,10 @@ export function reset() {
 
 export function load(preset) {
 	return { type : LOAD, preset };
+}
+
+export function loadHash(hash) {
+	return { type : LOAD_HASH, hash };
 }
 
 export function setPoints(prof, value) {
@@ -36,6 +39,14 @@ export function setOrcLevel(prof, value) {
 	return { type : SET_ORC_LEVEL, prof, value };
 }
 
-export function loadHash(hash) {
-	return { type : LOAD_HASH, hash };
+export function optimize() {
+	return { type : OPTIMIZE };
+}
+
+export function optimizeUruk() {
+	return { type : OPTIMIZE_URUK };
+}
+
+export function optimizeOrc() {
+	return { type : OPTIMIZE_ORC };
 }

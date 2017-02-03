@@ -1,31 +1,71 @@
-import React, { PropTypes } from "react";
+import React, { PropTypes, Component } from "react";
 
 import {
 	WARRIOR,
 	RANGER,
 	MYSTIC,
-	MAGE
-} from "../actions/rcd";
+	MAGE,
+
+	URUK,
+	ORC
+} from "../rclass";
 
 const RClass = PropTypes.shape({
-	name    : PropTypes.string.isRequired,
-	warrior : PropTypes.number.isRequired,
-	ranger  : PropTypes.number.isRequired,
-	mystic  : PropTypes.number.isRequired,
-	mage    : PropTypes.number.isRequired
+	getLevel       : PropTypes.func.isRequired,
+	getPoints      : PropTypes.func.isRequired,
+	getCoefficient : PropTypes.func.isRequired,
+	getTotal       : PropTypes.func.isRequired,
+	getRemaining   : PropTypes.func.isRequired
 });
 
-function RInput({ min, max, value, onChange }) {
-	return (
-		<input
-			type="number"
-			min={min}
-			max={max}
-			value={value}
-			onChange={onChange}
-			onBlur={onChange}
-		/>
-	);
+class RInput extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			isFocused : false,
+			value     : props.value
+		};
+	}
+
+	onChange(event) {
+		this.setState(Object.assign({}, this.state, {
+			value : event.target.value
+		}));
+
+		this.props.onChange(event);
+	}
+
+	onFocus() {
+		this.setState(Object.assign({}, this.state, {
+			isFocused : true,
+			value     : this.props.value
+		}));
+	}
+
+	onBlur() {
+		this.setState(Object.assign({}, this.state, {
+			isFocused : true,
+			value     : this.props.value
+		}));
+	}
+
+	render() {
+		const { isFocused } = this.state;
+		const { min, max } = this.props;
+
+		return (
+			<input
+				type="number"
+				min={min}
+				max={max}
+				value={isFocused ? this.state.value : this.props.value}
+				onFocus={() => this.onFocus()}
+				onBlur={() => this.onBlur()}
+				onChange={ev => this.onChange(ev)}
+			/>
+		);
+	}
 }
 
 RInput.defaultProps = {
@@ -58,11 +98,14 @@ RView.propTypes = {
 function RRow({
 	label,
 	prof,
-	points,
+	rcd,
 	setPoints,
 	setLevel,
 	setUrukLevel,
-	setOrcLevel
+	setOrcLevel,
+	optimize,
+	optimizeOrc,
+	optimizeUruk
 }) {
 	function onChange(method) {
 		return ({ target : { value } }) => {
@@ -74,16 +117,9 @@ function RRow({
 
 	const maxLevel = 36;
 	const maxPoints = 150;
-
-	const coeff = 10 * Math.sqrt(points);
-	const level = Math.floor((3 * coeff) / 10);
-
 	const minUrukLevel = prof === MAGE ? -3 : 0;
 	const maxUrukLevel = prof === MAGE ? maxLevel - 3 : maxLevel;
-	const urukLevel = prof === MAGE ? level - 3 : level;
-
 	const maxOrcLevel = (2 * maxLevel) / 3;
-	const orcLevel = Math.floor((2 * level) / 3);
 
 	return (
 		<tr>
@@ -91,33 +127,36 @@ function RRow({
 			<td>
 				<RInput
 					max={maxLevel}
-					value={level}
+					value={rcd.getLevel(prof)}
 					onChange={onChange(setLevel)}
+					onBlur={optimize}
 				/>
 			</td>
 			<td>
 				<RInput
 					max={maxPoints}
-					value={points}
+					value={rcd.getPoints(prof)}
 					onChange={onChange(setPoints)}
 				/>
 			</td>
 			<td>
-				<RView value={coeff} />
+				<RView value={rcd.getCoefficient(prof)} />
 			</td>
 			<td>
 				<RInput
 					min={minUrukLevel}
 					max={maxUrukLevel}
-					value={urukLevel}
+					value={rcd.getLevel(prof, URUK)}
 					onChange={onChange(setUrukLevel)}
+					onBlur={optimizeUruk}
 				/>
 			</td>
 			<td>
 				<RInput
 					max={maxOrcLevel}
-					value={orcLevel}
+					value={rcd.getLevel(prof, ORC)}
 					onChange={onChange(setOrcLevel)}
+					onBlur={optimizeOrc}
 				/>
 			</td>
 		</tr>
@@ -125,31 +164,38 @@ function RRow({
 }
 
 RRow.propTypes = {
+	rcd          : RClass.isRequired,
 	label        : PropTypes.string.isRequired,
 	prof         : PropTypes.string.isRequired,
-	points       : PropTypes.number.isRequired,
 	setPoints    : PropTypes.func.isRequired,
 	setLevel     : PropTypes.func.isRequired,
 	setUrukLevel : PropTypes.func.isRequired,
-	setOrcLevel  : PropTypes.func.isRequired
+	setOrcLevel  : PropTypes.func.isRequired,
+	optimize     : PropTypes.func.isRequired,
+	optimizeOrc  : PropTypes.func.isRequired,
+	optimizeUruk : PropTypes.func.isRequired
 };
 
 function RCD({
-	rcd : {
-		warrior,
-		ranger,
-		mystic,
-		mage
-	},
+	rcd,
 	reset,
 	setPoints,
 	setLevel,
 	setUrukLevel,
-	setOrcLevel
+	setOrcLevel,
+	optimize,
+	optimizeOrc,
+	optimizeUruk
 }) {
-	const pointsUsed = warrior + ranger + mystic + mage;
-	const pointsRemaining = 150 - pointsUsed;
-	const setters = { setPoints, setLevel, setUrukLevel, setOrcLevel };
+	const setters = {
+		setPoints,
+		setLevel,
+		setUrukLevel,
+		setOrcLevel,
+		optimize,
+		optimizeOrc,
+		optimizeUruk
+	};
 
 	return (
 		<table>
@@ -168,37 +214,37 @@ function RCD({
 					{...setters}
 					label="Warrior"
 					prof={WARRIOR}
-					points={warrior}
+					rcd={rcd}
 				/>
 				<RRow
 					{...setters}
 					label="Ranger"
 					prof={RANGER}
-					points={ranger}
+					rcd={rcd}
 				/>
 				<RRow
 					{...setters}
 					label="Mystic"
 					prof={MYSTIC}
-					points={mystic}
+					rcd={rcd}
 				/>
 				<RRow
 					{...setters}
 					label="Mage"
 					prof={MAGE}
-					points={mage}
+					rcd={rcd}
 				/>
 			</tbody>
 			<tfoot>
 				<tr>
 					<th>Total</th>
 					<td />
-					<td><RView value={pointsUsed} /></td>
+					<td><RView value={rcd.getTotal()} /></td>
 				</tr>
 				<tr>
 					<th>Remaining</th>
 					<td />
-					<td><RView value={pointsRemaining} /></td>
+					<td><RView value={rcd.getRemaining()} /></td>
 				</tr>
 				<tr>
 					<td />
@@ -216,7 +262,10 @@ RCD.propTypes = {
 	setPoints    : PropTypes.func.isRequired,
 	setLevel     : PropTypes.func.isRequired,
 	setUrukLevel : PropTypes.func.isRequired,
-	setOrcLevel  : PropTypes.func.isRequired
+	setOrcLevel  : PropTypes.func.isRequired,
+	optimize     : PropTypes.func.isRequired,
+	optimizeOrc  : PropTypes.func.isRequired,
+	optimizeUruk : PropTypes.func.isRequired
 };
 
 export default RCD;

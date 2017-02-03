@@ -7,8 +7,8 @@ import configureStore from "./store/configure-store";
 import { loadHash } from "./actions/rcd";
 import rcd from "./reducers/rcd";
 
-function updateURLHash({ rcd : { warrior, ranger, mystic, mage } }) {
-	global.location.hash = JSON.stringify([warrior, ranger, mystic, mage]);
+function updateURLHash({ rcd : r }) {
+	global.location.hash = JSON.stringify(r.toJSON());
 }
 
 const store = configureStore({
