@@ -82,4 +82,4 @@ dev:
 
 .PHONY: clean
 clean:
-	@rm -rf $(BUILD)
+	@rm -rf $(BUILD)/*
