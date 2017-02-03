@@ -45,9 +45,11 @@ class RInput extends Component {
 
 	onBlur() {
 		this.setState(Object.assign({}, this.state, {
-			isFocused : true,
+			isFocused : false,
 			value     : this.props.value
 		}));
+
+		this.props.onBlur();
 	}
 
 	render() {
@@ -76,6 +78,7 @@ RInput.propTypes = {
 	min      : PropTypes.number,
 	max      : PropTypes.number.isRequired,
 	value    : PropTypes.number.isRequired,
+	onBlur   : PropTypes.func.isRequired,
 	onChange : PropTypes.func.isRequired
 };
 
